@@ -1,6 +1,11 @@
 # phpfpm-nginx-helloworld on minikube
 This is a guide to running Nginx and PHP-FPM on Kubernetes taken from [matthewpalmer](https://github.com/matthewpalmer) with some changes. You’ll get an overview of each component in the environment, plus complete source code for running an application using PHP-FPM and Nginx on Kubernetes. This app is containerized and scaleable.
 
+## Prerequisites
+install minikube
+install kubectl
+...etc
+
 ###
 ## create simple hello world php app
 create a simple php app and name it hello.php
@@ -144,7 +149,8 @@ kubectl expose deploy phpfpm-nginx --type=NodePort --port=80
 ## open in browser
 Write below command:
 ```sh
+minikube image load my-php-app:1.0.0
 minikube service phpfpm-nginx
 ```
 Your app would now be opened in browser. If it says "403 forbidden", add /hello.php after the address like this:
-#### [IP]:[port]/hello.php
+## [IP]:[port]/hello.php

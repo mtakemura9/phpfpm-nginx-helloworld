@@ -1,18 +1,20 @@
+#deployment.yaml
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: phpfpm-nginx-example
+  name: phpfpm-nginx
   labels:
-    app: phpfpm-nginx-example
+    app: phpfpm-nginx
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: phpfpm-nginx-example
+      app: phpfpm-nginx
   template:
     metadata:
       labels:
-        app: phpfpm-nginx-example    
+        app: phpfpm-nginx
     spec:
       volumes:
         # Create the shared files volume to be used in both pods
@@ -23,7 +25,6 @@ spec:
         - name: nginx-config-volume
           configMap:
             name: nginx-config
-
       containers:
         # Our PHP-FPM application
         - image: my-php-app:1.0.0
@@ -31,23 +32,14 @@ spec:
           volumeMounts:
             - name: shared-files
               mountPath: /var/www/html
-      # Important! After this container has started, the PHP files
-      # in our Docker image aren't in the shared volume. We need to 
-      # get them into the shared volume. If we tried to write directly
-      # to this volume from our Docker image the files wouldn't appear
-      # in the nginx container.
-      #
-      # So, after the container has started, copy the PHP files from this
-      # container's local filesystem (/app -- added via the Docker image) 
-      # to the shared volume, which is mounted at /var/www/html.
           lifecycle:
             postStart:
               exec:
                 command: ["/bin/sh", "-c", "cp -r /app/. /var/www/html"]
     
-    # Our nginx container, which uses the configuration declared above,
-    # along with the files shared with the PHP-FPM app.
-        - image: nginx:1.7.9
+      # Our nginx container, which uses the configuration declared above,
+      # along with the files shared with the PHP-FPM app.
+        - image: nginx:latest
           name: nginx
           volumeMounts:
             - name: shared-files
